@@ -1,0 +1,488 @@
+// formConfig.js - Schema for configuring dynamic forms
+
+/**
+ * Form configuration schema that allows for flexible field definitions,
+ * dependencies, validations, and layout options
+ */
+ const formConfigSchema = {
+    // Form metadata
+    formName: "Tranche Details",
+    formId: "tranche-form",
+    version: "1.0",
+    
+    // Layout configuration (tabs, sections, columns)
+    layout: {
+      type: "tabbed", // Options: "tabbed", "accordion", "single-page"
+      tabs: [
+        {
+          id: "basic-details",
+          label: "Basic Details",
+          sections: [
+            {
+              id: "tranche-identity",
+              label: "Tranche Identity",
+              columns: 2,
+              fields: ["trancheId", "trancheName", "trancheType", "currency"]
+            },
+            {
+              id: "amount-details",
+              label: "Amount Details",
+              columns: 2,
+              fields: ["loanAmount", "interestRate", "tenor", "drawdownDate"]
+            }
+          ]
+        },
+        {
+          id: "pricing-terms",
+          label: "Pricing & Terms",
+          sections: [
+            {
+              id: "interest-details",
+              label: "Interest Details",
+              columns: 2,
+              fields: ["interestType", "spreadBps", "baseRate", "paymentFrequency"]
+            },
+            {
+              id: "fee-details",
+              label: "Fee Structure",
+              columns: 2,
+              fields: ["arrangementFee", "commitmentFee", "prepaymentFee"]
+            }
+          ]
+        },
+        {
+          id: "covenant-security",
+          label: "Covenants & Security",
+          sections: [
+            {
+              id: "covenants",
+              label: "Covenants",
+              columns: 1,
+              fields: ["debtServiceRatio", "ltvRatio", "financialCovenants"]
+            },
+            {
+              id: "security",
+              label: "Security",
+              columns: 1,
+              fields: ["collateralType", "collateralValue", "securityDetails"]
+            }
+          ]
+        },
+        {
+          id: "risk-calculation",
+          label: "Risk & Calculations",
+          sections: [
+            {
+              id: "risk-metrics",
+              label: "Risk Metrics",
+              columns: 2,
+              fields: ["riskRating", "probabilityOfDefault", "lossGivenDefault"]
+            },
+            {
+              id: "performance",
+              label: "Performance",
+              columns: 2,
+              fields: ["expectedROAE", "netInterestMargin", "expectedYield"]
+            }
+          ]
+        }
+      ]
+    },
+    
+    // Field definitions with validations, dependencies, etc.
+    fields: [
+      {
+        id: "trancheId",
+        label: "Tranche ID",
+        type: "text",
+        required: true,
+        placeholder: "Enter unique tranche identifier",
+        validation: {
+          pattern: "^[A-Z0-9-]{3,15}$",
+          message: "Tranche ID must be 3-15 characters (uppercase letters, numbers, hyphens)"
+        }
+      },
+      {
+        id: "trancheName",
+        label: "Tranche Name",
+        type: "text",
+        required: true,
+        placeholder: "Enter descriptive name"
+      },
+      {
+        id: "trancheType",
+        label: "Tranche Type",
+        type: "select",
+        required: true,
+        options: [
+          { value: "senior-secured", label: "Senior Secured" },
+          { value: "senior-unsecured", label: "Senior Unsecured" },
+          { value: "mezzanine", label: "Mezzanine" },
+          { value: "subordinated", label: "Subordinated" },
+          { value: "revolving", label: "Revolving Credit Facility" }
+        ],
+        defaultValue: "senior-secured"
+      },
+      {
+        id: "currency",
+        label: "Currency",
+        type: "select",
+        required: true,
+        options: [
+          { value: "USD", label: "USD - US Dollar" },
+          { value: "EUR", label: "EUR - Euro" },
+          { value: "GBP", label: "GBP - British Pound" },
+          { value: "JPY", label: "JPY - Japanese Yen" }
+        ],
+        defaultValue: "USD"
+      },
+      {
+        id: "loanAmount",
+        label: "Loan Amount",
+        type: "number",
+        required: true,
+        placeholder: "Enter amount",
+        validation: {
+          min: 100000,
+          message: "Minimum loan amount is 100,000"
+        },
+        formatters: {
+          display: "currency"
+        }
+      },
+      {
+        id: "interestRate",
+        label: "Interest Rate (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter rate",
+        validation: {
+          min: 0,
+          max: 100,
+          message: "Rate must be between 0 and 100"
+        },
+        formatters: {
+          display: "percentage"
+        }
+      },
+      {
+        id: "tenor",
+        label: "Tenor (Months)",
+        type: "number",
+        required: true,
+        placeholder: "Enter tenor in months",
+        validation: {
+          min: 1,
+          message: "Tenor must be at least 1 month"
+        }
+      },
+      {
+        id: "drawdownDate",
+        label: "Drawdown Date",
+        type: "date",
+        required: true
+      },
+      {
+        id: "interestType",
+        label: "Interest Type",
+        type: "select",
+        required: true,
+        options: [
+          { value: "fixed", label: "Fixed" },
+          { value: "floating", label: "Floating" }
+        ],
+        defaultValue: "floating"
+      },
+      {
+        id: "spreadBps",
+        label: "Spread (bps)",
+        type: "number",
+        required: true,
+        dependsOn: {
+          field: "interestType",
+          value: "floating",
+          showWhen: true
+        },
+        placeholder: "Enter spread in basis points",
+        validation: {
+          min: 0,
+          message: "Spread must be positive"
+        }
+      },
+      {
+        id: "baseRate",
+        label: "Base Rate",
+        type: "select",
+        dependsOn: {
+          field: "interestType",
+          value: "floating",
+          showWhen: true
+        },
+        options: [
+          { value: "LIBOR", label: "LIBOR" },
+          { value: "SOFR", label: "SOFR" },
+          { value: "EURIBOR", label: "EURIBOR" },
+          { value: "SONIA", label: "SONIA" }
+        ],
+        defaultValue: "SOFR"
+      },
+      {
+        id: "paymentFrequency",
+        label: "Payment Frequency",
+        type: "select",
+        required: true,
+        options: [
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "semi-annual", label: "Semi-Annual" },
+          { value: "annual", label: "Annual" }
+        ],
+        defaultValue: "quarterly"
+      },
+      {
+        id: "arrangementFee",
+        label: "Arrangement Fee (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter fee percentage",
+        validation: {
+          min: 0,
+          max: 10,
+          message: "Fee must be between 0 and 10%"
+        },
+        formatters: {
+          display: "percentage"
+        }
+      },
+      {
+        id: "commitmentFee",
+        label: "Commitment Fee (bps)",
+        type: "number",
+        required: true,
+        placeholder: "Enter fee in basis points",
+        validation: {
+          min: 0,
+          message: "Fee must be positive"
+        }
+      },
+      {
+        id: "prepaymentFee",
+        label: "Prepayment Fee (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter fee percentage",
+        validation: {
+          min: 0,
+          max: 5,
+          message: "Fee must be between 0 and 5%"
+        },
+        formatters: {
+          display: "percentage"
+        }
+      },
+      {
+        id: "debtServiceRatio",
+        label: "Minimum Debt Service Ratio",
+        type: "number",
+        required: true,
+        placeholder: "Enter ratio (e.g., 1.2)",
+        validation: {
+          min: 1,
+          message: "Ratio must be at least 1.0"
+        }
+      },
+      {
+        id: "ltvRatio",
+        label: "Maximum LTV Ratio (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter percentage",
+        validation: {
+          min: 0,
+          max: 100,
+          message: "Ratio must be between 0 and 100%"
+        },
+        formatters: {
+          display: "percentage"
+        }
+      },
+      {
+        id: "financialCovenants",
+        label: "Financial Covenants",
+        type: "textarea",
+        placeholder: "Describe additional financial covenants"
+      },
+      {
+        id: "collateralType",
+        label: "Collateral Type",
+        type: "select",
+        required: true,
+        options: [
+          { value: "real-estate", label: "Real Estate" },
+          { value: "equipment", label: "Equipment" },
+          { value: "inventory", label: "Inventory" },
+          { value: "accounts-receivable", label: "Accounts Receivable" },
+          { value: "cash", label: "Cash/Deposits" },
+          { value: "unsecured", label: "Unsecured" }
+        ],
+        defaultValue: "real-estate"
+      },
+      {
+        id: "collateralValue",
+        label: "Collateral Value",
+        type: "number",
+        dependsOn: {
+          field: "collateralType",
+          value: "unsecured",
+          showWhen: false
+        },
+        placeholder: "Enter value",
+        required: true,
+        validation: {
+          min: 0,
+          message: "Value must be positive"
+        },
+        formatters: {
+          display: "currency"
+        }
+      },
+      {
+        id: "securityDetails",
+        label: "Security Details",
+        type: "textarea",
+        dependsOn: {
+          field: "collateralType",
+          value: "unsecured",
+          showWhen: false
+        },
+        placeholder: "Describe security arrangements"
+      },
+      {
+        id: "riskRating",
+        label: "Risk Rating",
+        type: "select",
+        required: true,
+        options: [
+          { value: "AAA", label: "AAA" },
+          { value: "AA", label: "AA" },
+          { value: "A", label: "A" },
+          { value: "BBB", label: "BBB" },
+          { value: "BB", label: "BB" },
+          { value: "B", label: "B" },
+          { value: "CCC", label: "CCC" }
+        ],
+        defaultValue: "BBB"
+      },
+      {
+        id: "probabilityOfDefault",
+        label: "Probability of Default (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter percentage",
+        validation: {
+          min: 0,
+          max: 100,
+          message: "Value must be between 0 and 100%"
+        },
+        formatters: {
+          display: "percentage"
+        }
+      },
+      {
+        id: "lossGivenDefault",
+        label: "Loss Given Default (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter percentage",
+        validation: {
+          min: 0,
+          max: 100,
+          message: "Value must be between 0 and 100%"
+        },
+        formatters: {
+          display: "percentage"
+        }
+      },
+      {
+        id: "expectedROAE",
+        label: "Expected ROAE (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter percentage",
+        computed: true, // Flag indicating this is calculated from other fields
+        formula: "calculateROAE", // Reference to calculation function
+        formatters: {
+          display: "percentage"
+        }
+      },
+      {
+        id: "netInterestMargin",
+        label: "Net Interest Margin (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter percentage",
+        computed: true,
+        formula: "calculateNIM",
+        formatters: {
+          display: "percentage"
+        }
+      },
+      {
+        id: "expectedYield",
+        label: "Expected Yield (%)",
+        type: "number",
+        required: true,
+        placeholder: "Enter percentage",
+        computed: true,
+        formula: "calculateYield",
+        formatters: {
+          display: "percentage"
+        }
+      }
+    ],
+    
+    // Template definitions for quick-fill options
+    templates: [
+      {
+        id: "senior-secured-template",
+        name: "Senior Secured Loan",
+        description: "Standard terms for a senior secured loan",
+        fieldValues: {
+          trancheType: "senior-secured",
+          interestType: "floating",
+          baseRate: "SOFR",
+          spreadBps: 250,
+          paymentFrequency: "quarterly",
+          arrangementFee: 1.0,
+          commitmentFee: 50,
+          prepaymentFee: 1.0,
+          riskRating: "BBB"
+        }
+      },
+      {
+        id: "revolving-credit-template",
+        name: "Revolving Credit Facility",
+        description: "Standard terms for a revolving credit facility",
+        fieldValues: {
+          trancheType: "revolving",
+          interestType: "floating",
+          baseRate: "SOFR",
+          spreadBps: 200,
+          paymentFrequency: "monthly",
+          arrangementFee: 0.75,
+          commitmentFee: 35,
+          prepaymentFee: 0.5,
+          riskRating: "BBB"
+        }
+      }
+    ],
+    
+    // Calculation functions referenced in field formulas
+    calculations: {
+      calculateROAE: "return (netInterestMargin * 100 / capitalAllocation) - capitalCost;",
+      calculateNIM: "return interestRate - fundingCost;",
+      calculateYield: "return interestRate + (arrangementFee / tenor * 12);"
+    }
+  };
+  
+  export default formConfigSchema;

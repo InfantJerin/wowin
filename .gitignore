@@ -2,3 +2,5 @@
 ctl_env/
 /ctl_env
 *.pyc
+node_modules
+.next
