@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/wowin/', // Adjusted base path for your repo
+  base: '/wowin/', // This is crucial for GitHub Pages
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
