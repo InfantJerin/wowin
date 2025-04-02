@@ -24,8 +24,9 @@ jobs:
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
+          name: github-pages
           path: './dist'
 
   deploy:
@@ -35,6 +36,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: github-pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1 
