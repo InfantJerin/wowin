@@ -15,20 +15,58 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
         with:
           node-version: '18'
-      - run: npm ci
-      - run: npm run build
-      - run: touch dist/.nojekyll
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          npm ci
+          echo "Dependencies installed successfully"
+      
+      - name: Build project
+        run: |
+          echo "Building project..."
+          npm run build
+          echo "Build completed"
+      
+      - name: Create .nojekyll file
+        run: |
+          echo "Creating .nojekyll file..."
+          touch dist/.nojekyll
+          echo ".nojekyll file created"
+      
       - name: List dist contents
-        run: ls -la dist
+        run: |
+          echo "Listing dist directory contents:"
+          ls -la dist
+      
       - name: Check index.html
-        run: cat dist/index.html
-      - uses: actions/configure-pages@v1
-      - uses: actions/upload-pages-artifact@v1
+        run: |
+          echo "Checking index.html contents:"
+          cat dist/index.html
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
+        with:
+          artifact_name: github-pages
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
           path: './dist'
           retention-days: 1
-      - uses: actions/deploy-pages@v1 
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+        with:
+          artifact_name: github-pages 
