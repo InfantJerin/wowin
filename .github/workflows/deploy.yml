@@ -21,6 +21,12 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Create .nojekyll file
+        run: touch dist/.nojekyll
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: './dist'
 
   deploy:
     needs: build
