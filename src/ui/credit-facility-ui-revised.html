@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credit Facility Agreement</title>
+  <style>
+    :root {
+      --primary: #0e4275;
+      --primary-light: #e5f0f9;
+      --secondary: #f8f9fa;
+      --border: #d1d5db;
+      --text: #333;
+      --text-light: #6b7280;
+      --success: #0d6efd;
+      --danger: #dc3545;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f0f2f5;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+    
+    .header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .header-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    label {
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    
+    input, select {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 15px;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(14, 66, 117, 0.15);
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      min-height: 500px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .facilities-panel {
+      padding: 20px;
+      border-right: 1px solid var(--border);
+    }
+    
+    .panel-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+    
+    .facility-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .facility-item {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .facility-item:hover {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+    
+    .facility-item.active {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+    
+    .facility-name {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+    
+    .facility-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      font-size: 14px;
+    }
+    
+    .meta-label {
+      color: var(--text-light);
+    }
+    
+    .meta-value {
+      font-weight: 500;
+    }
+    
+    .add-facility {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--primary);
+      transition: all 0.2s;
+    }
+    
+    .add-facility:hover {
+      background-color: var(--primary-light);
+      border-color: var(--primary);
+    }
+    
+    .add-icon {
+      margin-right: 8px;
+      font-size: 18px;
+    }
+    
+    .details-panel {
+      padding: 20px;
+    }
+    
+    .details-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+    
+    .form-row label {
+      width: 150px;
+      padding-top: 10px;
+    }
+    
+    .form-row input, .form-row select {
+      flex: 1;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    
+    button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: #0a3157;
+    }
+    
+    .btn-secondary {
+      background-color: white;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--primary-light);
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .facilities-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      
+      .header-form {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        flex-direction: column;
+      }
+      
+      .form-row label {
+        width: 100%;
+        padding-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header Section with Borrower Info -->
+    <div class="header">
+      <div class="header-form">
+        <div class="form-group">
+          <label for="borrower">Borrower</label>
+          <input type="text" id="borrower" placeholder="Enter borrower name">
+        </div>
+        <div class="form-group">
+          <label for="agreement-date">Agreement Date</label>
+          <input type="date" id="agreement-date">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Two-Panel Layout -->
+    <div class="main-content">
+      <!-- Left Panel - Facilities List -->
+      <div class="facilities-panel">
+        <h2 class="panel-title">Facility</h2>
+        
+        <div class="facility-list">
+          <!-- Facility A -->
+          <div class="facility-item active">
+            <div class="facility-name">Facility A</div>
+            <div class="facility-meta">
+              <div>
+                <div class="meta-label">Type</div>
+                <div class="meta-value">Term Loan</div>
+              </div>
+              <div>
+                <div class="meta-label">Amount</div>
+                <div class="meta-value">$5,000,000</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Facility B -->
+          <div class="facility-item">
+            <div class="facility-name">Facility B</div>
+            <div class="facility-meta">
+              <div>
+                <div class="meta-label">Type</div>
+                <div class="meta-value">Revolving Credit</div>
+              </div>
+              <div>
+                <div class="meta-label">Amount</div>
+                <div class="meta-value">$2,500,000</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Facility C -->
+          <div class="facility-item">
+            <div class="facility-name">Facility C</div>
+            <div class="facility-meta">
+              <div>
+                <div class="meta-label">Type</div>
+                <div class="meta-value">Bridge Loan</div>
+              </div>
+              <div>
+                <div class="meta-label">Amount</div>
+                <div class="meta-value">$1,000,000</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Add Facility Button -->
+          <div class="add-facility">
+            <span class="add-icon">+</span> Add Facility
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Panel - Facility Details -->
+      <div class="details-panel">
+        <h2 class="panel-title">Facility Details</h2>
+        
+        <div class="details-form">
+          <div class="form-row">
+            <label for="facility-name">Facility Name</label>
+            <input type="text" id="facility-name" value="Facility A">
+          </div>
+          
+          <div class="form-row">
+            <label for="facility-type">Type</label>
+            <select id="facility-type">
+              <option>Term Loan</option>
+              <option>Revolving Credit</option>
+              <option>Bridge Loan</option>
+              <option>Commercial Paper</option>
+            </select>
+          </div>
+          
+          <div class="form-row">
+            <label for="facility-amount">Amount</label>
+            <input type="text" id="facility-amount" value="$5,000,000">
+          </div>
+          
+          <div class="form-row">
+            <label for="facility-rate">Rate</label>
+            <input type="text" id="facility-rate" value="4.25%">
+          </div>
+          
+          <div class="form-row">
+            <label for="maturity-date">Maturity Date</label>
+            <input type="date" id="maturity-date" value="2030-05-15">
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn-secondary">Cancel</button>
+            <button class="btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
