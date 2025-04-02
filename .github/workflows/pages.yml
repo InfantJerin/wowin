@@ -24,6 +24,8 @@ jobs:
       - run: touch dist/.nojekyll
       - name: List dist contents
         run: ls -la dist
+      - name: Check index.html
+        run: cat dist/index.html
       - uses: actions/configure-pages@v1
       - uses: actions/upload-pages-artifact@v1
         with:
