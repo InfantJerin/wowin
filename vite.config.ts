@@ -6,5 +6,19 @@ export default defineConfig({
   base: '/wowin/', // Adjusted base path for your repo
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx']
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  },
+  server: {
+    port: 5173,
+    strictPort: true
   }
 });
